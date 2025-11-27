@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project-0 — AI платформа для создания веб-приложений</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background-color: #FAFAFA;
+            color: #000000;
+        }
+        
+        .text-primary {
+            color: #000000;
+        }
+        
+        .bg-primary {
+            background-color: #000000;
+        }
+        
+        .border-primary {
+            border-color: #000000;
+        }
+        
+        .feature-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E5E5;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: #000000;
+        }
+        
+        .pricing-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E5E5;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: #000000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .pricing-card.featured {
+            border-color: #000000;
+            border-width: 2px;
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .team-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E5E5;
+            transition: all 0.3s ease;
+        }
+        
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: #000000;
+        }
+        
+        .game-frame {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 2px solid #000000;
+        }
+        
+        .game-screen {
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 70%, #F5F5F5 70%, #F5F5F5 100%);
+            position: relative;
+            height: 300px;
+        }
+        
+        .ai-character {
+            position: absolute;
+            bottom: 80px;
+            left: 50px;
+            width: 40px;
+            height: 40px;
+            background: #000000;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .obstacle {
+            position: absolute;
+            bottom: 80px;
+            right: 100px;
+            width: 30px;
+            height: 30px;
+            background: #FF0000;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .code-point {
+            position: absolute;
+            top: 50px;
+            right: 150px;
+            width: 25px;
+            height: 25px;
+            background: #00FF00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            background: #000000;
+        }
+        
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        .cloud1 {
+            width: 60px;
+            height: 30px;
+            top: 30px;
+            left: 100px;
+        }
+        
+        .cloud2 {
+            width: 80px;
+            height: 40px;
+            top: 50px;
+            left: 200px;
+        }
+        
+        .score-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .game-ui {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            border: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .close-modal:hover {
+            background: black;
+            color: white;
+        }
+        
+        .contact-info {
+            text-align: center;
+        }
+        
+        .contact-info h3 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .contact-item:hover {
+            background: #e5e5e5;
+        }
+        
+        .contact-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .institute-logo {
+            max-width: 120px;
+            height: auto;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Language Switcher -->
+    <div class="fixed top-4 right-4 z-50 bg-white border-2 border-black rounded-lg p-2">
+        <div class="flex space-x-2">
+            <button onclick="changeLanguage('kz')" class="lang-btn px-3 py-2 rounded-md transition-all duration-300 hover:bg-black hover:text-white" data-lang="kz">
+                <span class="font-semibold">Қаз</span>
+            </button>
+            <button onclick="changeLanguage('ru')" class="lang-btn px-3 py-2 rounded-md transition-all duration-300 bg-black text-white" data-lang="ru">
+                <span class="font-semibold">Рус</span>
+            </button>
+            <button onclick="changeLanguage('en')" class="lang-btn px-3 py-2 rounded-md transition-all duration-300 hover:bg-black hover:text-white" data-lang="en">
+                <span class="font-semibold">Eng</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 z-40 bg-white bg-opacity-95 backdrop-blur-lg border-b border-gray-200">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <img src="/home/yernur/Pictures/plogo.jpeg" alt="Project-0 Logo" class="w-10 h-10 rounded-lg">
+                    <span class="text-2xl font-bold" data-i18n="logo">Project-0</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#features" class="hover:text-gray-600 transition-colors" data-i18n="nav_features">Фичи</a>
+                    <a href="#how-it-works" class="hover:text-gray-600 transition-colors" data-i18n="nav_how">Как работает</a>
+                    <a href="#team" class="hover:text-gray-600 transition-colors" data-i18n="nav_team">Команда</a>
+                    <a href="#pricing" class="hover:text-gray-600 transition-colors" data-i18n="nav_pricing">Цены</a>
+                    <a href="#contact" class="hover:text-gray-600 transition-colors" data-i18n="nav_contact">Контакты</a>
+                </div>
+                <button class="px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors" data-i18n="nav_login">Войти</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center pt-20">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="slide-in">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-6">
+                        Project-0 — <span class="text-gray-600" data-i18n="hero_subtitle">Build full web apps instantly</span>
+                    </h1>
+                    <p class="text-2xl text-gray-600 mb-8" data-i18n="hero_description">
+                        Powered by AI. Generate complete MVPs in minutes. Preview. Download. Ship.
+                    </p>
+                </div>
+                <div class="relative floating">
+                    <div class="border-2 border-black rounded-2xl p-1">
+                        <div class="bg-white rounded-2xl p-8">
+                            <div class="aspect-video bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-robot text-6xl text-black"></i>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex space-x-2">
+                                    <span class="px-3 py-1 bg-black text-white rounded-full text-sm" data-i18n="hero_ai_badge">AI Generated</span>
+                                    <span class="px-3 py-1 bg-gray-200 rounded-full text-sm" data-i18n="hero_live_badge">Live</span>
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    <i class="fas fa-clock"></i> 2 min
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span data-i18n="features_title">Ключевые возможности</span>
+                </h2>
+                <p class="text-xl text-gray-500" data-i18n="features_subtitle">Все что нужно для создания веб-приложений</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="feature-card rounded-xl p-8">
+                    <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-rocket text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4" data-i18n="feature1_title">Instant Generation</h3>
+                    <p class="text-gray-600 mb-4" data-i18n="feature1_desc">Мгновенная генерация полных веб-приложений с HTML, CSS, JS и бэкендом</p>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature1_item1">Полный стек</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature1_item2">Готовый к деплою</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature1_item3">Лучшие практики</span></li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card rounded-xl p-8">
+                    <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-eye text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4" data-i18n="feature2_title">Live Preview</h3>
+                    <p class="text-gray-600 mb-4" data-i18n="feature2_desc">Встроенный превью с live-режимом для мгновенного тестирования</p>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature2_item1">Real-time редактирование</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature2_item2">Мобильная версия</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature2_item3">Инспектор кода</span></li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card rounded-xl p-8">
+                    <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-download text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4" data-i18n="feature3_title">Export ZIP</h3>
+                    <p class="text-gray-600 mb-4" data-i18n="feature3_desc">Скачивание проекта в ZIP для локальной разработки</p>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature3_item1">Чистый код</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature3_item2">Документация</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature3_item3">Git ready</span></li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card rounded-xl p-8">
+                    <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-brain text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4" data-i18n="feature4_title">AI-Powered</h3>
+                    <p class="text-gray-600 mb-4" data-i18n="feature4_desc">Продвинутый ИИ на базе Ollama для генерации кода</p>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature4_item1">Локальная модель</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature4_item2">Быстрая обработка</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature4_item3">Высокое качество</span></li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card rounded-xl p-8">
+                    <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-magic text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4" data-i18n="feature5_title">No Code Required</h3>
+                    <p class="text-gray-600 mb-4" data-i18n="feature5_desc">Создавайте приложения без навыков программирования</p>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature5_item1">Естественный язык</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature5_item2">Простые инструкции</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature5_item3">Интуитивный интерфейс</span></li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card rounded-xl p-8">
+                    <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-edit text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4" data-i18n="feature6_title">Real-time Editing</h3>
+                    <p class="text-gray-600 mb-4" data-i18n="feature6_desc">Редактируйте код прямо в браузере</p>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature6_item1">Syntax highlight</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature6_item2">Auto-save</span></li>
+                        <li><i class="fas fa-check text-black mr-2"></i><span data-i18n="feature6_item3">Collaboration</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span data-i18n="how_title">Как это работает</span>
+                </h2>
+                <p class="text-xl text-gray-500" data-i18n="how_subtitle">4 простых шага к вашему приложению</p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl font-bold">1</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-i18n="how_step1_title">Опиши идею</h3>
+                    <p class="text-gray-600" data-i18n="how_step1_desc">Расскажи ИИ что ты хочешь создать простым языком</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl font-bold">2</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-i18n="how_step2_title">AI генерирует код</h3>
+                    <p class="text-gray-600" data-i18n="how_step2_desc">Нейросеть создает полный код приложения за секунды</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl font-bold">3</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-i18n="how_step3_title">Тестируй в превью</h3>
+                    <p class="text-gray-600" data-i18n="how_step3_desc">Сразу проверь как работает приложение в live-режиме</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl font-bold">4</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-i18n="how_step4_title">Скачай и используй</h3>
+                    <p class="text-gray-600" data-i18n="how_step4_desc">Экспортируй проект и начинай использовать его</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span data-i18n="team_title">Наша команда</span>
+                </h2>
+                <p class="text-xl text-gray-500" data-i18n="team_subtitle">Студенты института ИИ Коркыт ата</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="team-card rounded-xl p-8 text-center">
+                    <img src="/home/yernur/Pictures/me.jpeg" alt="Ернур" class="w-32 h-32 rounded-full mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-bold mb-2">Ернур</h3>
+                    <p class="text-gray-600 mb-4" data-i18n="team_yernur_role">Разработчик и основатель проекта</p>
+                    <p class="text-gray-500 mb-6" data-i18n="team_yernur_desc">Full-stack разработчик с 2+ годами опыта. Создал инновационную AI-платформу для автоматизации веб-разработки.</p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="https://www.instagram.com/yrn.dev_86b/" target="_blank" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="team-card rounded-xl p-8 text-center">
+                    <img src="/home/yernur/Pictures/WhatsApp Image 2025-11-26 at 13.36.02.jpeg" alt="Мухаммед" class="w-32 h-32 rounded-full mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-bold mb-2">Мухаммед</h3>
+                    <p class="text-gray-600 mb-4" data-i18n="team_mukhammad_role">DevOps проекта</p>
+                    <p class="text-gray-500 mb-6" data-i18n="team_mukhammad_desc">Специалист по инфраструктуре и развертыванию. Обеспечивает стабильную работу платформы и масштабирование.</p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="https://www.instagram.com/mukhash.zip/" target="_blank" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Preview Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span data-i18n="game_title">Мини-игра</span> <span data-i18n="game_subtitle">во время генерации</span>
+                </h2>
+                <p class="text-xl text-gray-500" data-i18n="game_desc">Инновационная фича — играйте пока ИИ создает ваше приложение!</p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto">
+                <div class="game-frame">
+                    <div class="game-screen">
+                        <!-- Облака -->
+                        <div class="cloud cloud1"></div>
+                        <div class="cloud cloud2"></div>
+                        
+                        <!-- AI персонаж -->
+                        <div class="ai-character">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        
+                        <!-- Препятствие (ошибка) -->
+                        <div class="obstacle">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        
+                        <!-- Очки (коды) -->
+                        <div class="code-point">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        
+                        <!-- Земля -->
+                        <div class="ground"></div>
+                        
+                        <!-- UI элементы -->
+                        <div class="score-display">
+                            <span data-i18n="game_score">Счет:</span> 1250
+                        </div>
+                        
+                        <div class="game-ui">
+                            <span data-i18n="game_controls">Нажмите пробел для прыжка</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-8">
+                    <p class="text-gray-600" data-i18n="game_note">
+                        Это демонстрация игры. ИИ-персонаж прыгает через ошибки и собирает коды как очки.
+                    </p>
+                    <p class="text-sm text-gray-500 mt-2" data-i18n="game_credit">Created by Project-0</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span data-i18n="pricing_title">Выберите тариф</span>
+                </h2>
+                <p class="text-xl text-gray-500" data-i18n="pricing_subtitle">2 кредита за каждый запрос</p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                <div class="pricing-card rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-4" data-i18n="pricing_free_title">Бесплатно</h3>
+                    <div class="text-4xl font-bold mb-6">
+                        0₸
+                        <span class="text-base font-normal text-gray-500" data-i18n="pricing_free_period">/навсегда</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_free_feature1">3 запроса при регистрации</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_free_feature2">Базовый функционал</span>
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="fas fa-times mr-3"></i>
+                            <span data-i18n="pricing_free_feature3">Приоритетная поддержка</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="pricing-card rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-4" data-i18n="pricing_starter_title">Стартовый</h3>
+                    <div class="text-4xl font-bold mb-6">
+                        2,560₸
+                        <span class="text-base font-normal text-gray-500" data-i18n="pricing_starter_period">/разово</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_starter_feature1">10 кредитов</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_starter_feature2">Все фичи</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_starter_feature3">Email поддержка</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="pricing-card featured rounded-xl p-8">
+                    <div class="bg-black text-white text-sm px-3 py-1 rounded-full inline-block mb-4" data-i18n="pricing_standard_badge">Популярный</div>
+                    <h3 class="text-2xl font-bold mb-4" data-i18n="pricing_standard_title">Стандарт</h3>
+                    <div class="text-4xl font-bold mb-6">
+                        12,800₸
+                        <span class="text-base font-normal text-gray-500" data-i18n="pricing_standard_period">/разово</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_standard_feature1">50 кредитов</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_standard_feature2">Все фичи</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_standard_feature3">Приоритетная поддержка</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="pricing-card rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-4" data-i18n="pricing_pro_title">Pro</h3>
+                    <div class="text-4xl font-bold mb-6">
+                        25,600₸
+                        <span class="text-base font-normal text-gray-500" data-i18n="pricing_pro_period">/разово</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_pro_feature1">100 кредитов</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_pro_feature2">Все фичи</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-black mr-3"></i>
+                            <span data-i18n="pricing_pro_feature3">VIP поддержка 24/7</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kazakhstan Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                        <span data-i18n="kz_title">Сделано в Казахстане</span> 🇰🇿
+                    </h2>
+                    <p class="text-xl text-gray-600 mb-6" data-i18n="kz_desc">
+                        Мы гордимся тем, что создаем инновационные технологии в сердце Центральной Азии. 
+                        Наша команда разрабатывает передовые AI-решения для всего мира.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 mb-8">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold mb-2">2025</div>
+                            <div class="text-gray-500" data-i18n="kz_year">Год основания</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold mb-2" data-i18n="kz_location_name">Институт ИИ</div>
+                            <div class="text-gray-500" data-i18n="kz_location">Коркыт ата</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <img src="/home/yernur/Pictures/digitalkz.jpeg" alt="Modern Kazakhstan" class="rounded-2xl shadow-lg">
+                    <div class="absolute -bottom-6 -right-6 bg-black text-white rounded-xl p-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">🇰🇿</span>
+                            <div>
+                                <div class="font-bold" data-i18n="kz_card_title">Kazakhstan</div>
+                                <div class="text-sm opacity-80" data-i18n="kz_card_subtitle">Innovation Hub</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="py-12 bg-white border-t border-gray-200">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="/home/yernur/Pictures/plogo.jpeg" alt="Project-0 Logo" class="w-8 h-8 rounded-lg">
+                        <span class="text-xl font-bold" data-i18n="footer_brand">Project-0</span>
+                    </div>
+                    <p class="text-gray-600" data-i18n="footer_desc">AI платформа для мгновенной генерации веб-приложений</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4" data-i18n="footer_product_title">Продукт</h4>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><a href="#features" class="hover:text-black transition-colors" data-i18n="footer_product_features">Фичи</a></li>
+                        <li><a href="#pricing" class="hover:text-black transition-colors" data-i18n="footer_product_pricing">Цены</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4" data-i18n="footer_company_title">Компания</h4>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><a href="#" onclick="showContactModal()" class="hover:text-black transition-colors cursor-pointer" data-i18n="footer_company_about">О нас</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4" data-i18n="footer_contact_title">Контакты</h4>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><i class="fab fa-instagram mr-2"></i><a href="https://www.instagram.com/p0dev.kz/" target="_blank" class="hover:text-black transition-colors">@p0dev.kz</a></li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i><span data-i18n="footer_contact_location">Институт ИИ Коркыт ата</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-600 text-sm mb-4 md:mb-0" data-i18n="footer_copyright">
+                    © 2025 Project-0. Все права защищены. Сделано в Казахстане 🇰🇿
+                </p>
+                <div class="flex space-x-6">
+                    <a href="https://www.instagram.com/p0dev.kz/" target="_blank" class="text-gray-600 hover:text-black transition-colors">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeContactModal()">
+                <i class="fas fa-times"></i>
+            </div>
+            
+            <div class="contact-info">
+                <img src="/home/yernur/Pictures/cpai/images.jpeg" alt="Institute Logo" class="institute-logo mx-auto mb-4">
+                <h3 data-i18n="modal_title">Контактная информация</h3>
+                
+                <div class="contact-item">
+                    <i class="fas fa-user"></i>
+                    <span><strong data-i18n="modal_name">Канат Ернур</strong></span>
+                </div>
+                
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+7-708-202-1308</span>
+                </div>
+                
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>kanaternur33@gmail.com</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Translation data
+        const translations = {
+            kz: {
+                logo: "Project-0",
+                nav_features: "Ерекшеліктер",
+                nav_how: "Қалай жұмыс істейді",
+                nav_team: "Команда",
+                nav_pricing: "Бағалар",
+                nav_contact: "Байланыс",
+                nav_login: "Кіру",
+                hero_subtitle: "Веб-қосымшаларды лезде жасаңыз",
+                hero_description: "AI қуатымен. Толық MVP-ны минуттарда жасаңыз. Алдын ала қараңыз. Жүктеп алыңыз. Жөнелтіңіз.",
+                hero_ai_badge: "AI жасаған",
+                hero_live_badge: "Тірі",
+                features_title: "Негізгі мүмкіндіктер",
+                features_subtitle: "Веб-қосымшалар жасау үшін керектінің бәрі",
+                feature1_title: "Лезде генерация",
+                feature1_desc: "HTML, CSS, JS және бэкенді қамтитын толық веб-қосымшаларды лезде жасау",
+                feature1_item1: "Толық стек",
+                feature1_item2: "Деплойге дайын",
+                feature1_item3: "Үздік практикалар",
+                feature2_title: "Тірі алдын ала қарау",
+                feature2_desc: "Лезде тестіреу үшін тірі режимді қамтитын ішкі алдын ала қарау",
+                feature2_item1: "Real-time редактирование",
+                feature2_item2: "Мобильді нұсқасы",
+                feature2_item3: "Код инспекторы",
+                feature3_title: "ZIP экспорты",
+                feature3_desc: "Жергілікті әзірлеу үшін жобаны ZIP түрінде жүктеу",
+                feature3_item1: "Таза код",
+                feature3_item2: "Құжаттама",
+                feature3_item3: "Git дайын",
+                feature4_title: "AI қуатталған",
+                feature4_desc: "Код генерациялау үшін Ollama негізіндегі жетілген ИИ",
+                feature4_item1: "Жергілікті модель",
+                feature4_item2: "Жылдам өңдеу",
+                feature4_item3: "Жоғары сапа",
+                feature5_title: "Код талап етпейді",
+                feature5_desc: "Бағдарламалау дағдыларысыз қосымшалар жасаңыз",
+                feature5_item1: "Табиғи тіл",
+                feature5_item2: "Қарапайым нұсқаулықтар",
+                feature5_item3: "Интуитивті интерфейс",
+                feature6_title: "Real-time редактирование",
+                feature6_desc: "Кодты браузерде тікелей редактеңіз",
+                feature6_item1: "Syntax highlight",
+                feature6_item2: "Auto-save",
+                feature6_item3: "Сыртқы ынтымақтастық",
+                how_title: "Бұл қалай жұмыс істейді",
+                how_subtitle: "Қосымшаға апаратын 4 қадам",
+                how_step1_title: "Идеяны сипатта",
+                how_step1_desc: "ИИ-ге қалай жасағыңыз келетінін қарапайым тілде айт",
+                how_step2_title: "AI код жасайды",
+                how_step2_desc: "Нейрондық желі секундтарда толық код жасайды",
+                how_step3_title: "Алдын ала қарап тексер",
+                how_step3_desc: "Қосымшаның қалай жұмыс істейтінін тікелей режимде бірден тексер",
+                how_step4_title: "Жүктеп алып пайдалан",
+                how_step4_desc: "Жобаны экспорттап пайдалана бастаңыз",
+                team_title: "Біздің команда",
+                team_subtitle: "Коркыт ата ИИ институтының студенттері",
+                team_yernur_role: "Әзірлеуші және жобаның қалаушысы",
+                team_yernur_desc: "2+ жыл тәжірибесі бар Full-stack әзірлеуші. Веб-әзірлеуді автоматтандыруға арналған инновациялық AI платформасын жасады.",
+                team_mukhammad_role: "Жобаның DevOps",
+                team_mukhammad_desc: "Инфраструктура және развертывание маманы. Платформаның тұрақты жұмысын және масштабтауын қамтамасыз етеді.",
+                game_title: "Мини-ойын",
+                game_subtitle: "генерация кезінде",
+                game_desc: "Инновациялық фича — ИИ сіздің қосымшаңызды жасап жатқанда ойнаңыз!",
+                game_score: "Ұпай:",
+                game_controls: "Секіру үшін бос орынды басыңыз",
+                game_note: "Бұл ойынның демонстрациясы. ИИ-персонаж қателерден секіріп, кодтарды ұпай ретінде жинайды.",
+                game_credit: "Project-0 жасаған",
+                pricing_title: "Тарифті таңдаңыз",
+                pricing_subtitle: "Әр сұраныс үшін 2 кредит",
+                pricing_free_title: "Тегін",
+                pricing_free_period: "мәңгілікке",
+                pricing_free_feature1: "Тіркелу кезінде 3 сұраныс",
+                pricing_free_feature2: "Негізгі функционал",
+                pricing_free_feature3: "Артықшылықты қолдау",
+                pricing_starter_title: "Бастапқы",
+                pricing_starter_period: "бір рет",
+                pricing_starter_feature1: "10 кредит",
+                pricing_starter_feature2: "Барлық функциялар",
+                pricing_starter_feature3: "Email қолдау",
+                pricing_standard_title: "Стандарт",
+                pricing_standard_period: "бір рет",
+                pricing_standard_badge: "Популярлы",
+                pricing_standard_feature1: "50 кредит",
+                pricing_standard_feature2: "Барлық функциялар",
+                pricing_standard_feature3: "Артықшылықты қолдау",
+                pricing_pro_title: "Pro",
+                pricing_pro_period: "бір рет",
+                pricing_pro_feature1: "100 кредит",
+                pricing_pro_feature2: "Барлық функциялар",
+                pricing_pro_feature3: "VIP қолдау 24/7",
+                kz_title: "Қазақстанда жасалған",
+                kz_desc: "Біз Орталық Азияның жүрегінде инновациялық технологиялар жасауға мақтанамыз. Біздің команда бүкіл әлем үшін алдыңғы қатарлы AI шешімдерін әзірлейді.",
+                kz_year: "Құрылған жылы",
+                kz_location_name: "ИИ институты",
+                kz_location: "Коркыт ата",
+                kz_card_title: "Қазақстан",
+                kz_card_subtitle: "Инновация орталығы",
+                footer_brand: "Project-0",
+                footer_desc: "Веб-қосымшаларды лезде генерациялауға арналған AI платформасы",
+                footer_product_title: "Өнім",
+                footer_product_features: "Ерекшеліктер",
+                footer_product_pricing: "Бағалар",
+                footer_company_title: "Компания",
+                footer_company_about: "Біз туралы",
+                footer_contact_title: "Байланыс",
+                footer_contact_location: "ИИ институты Коркыт ата",
+                footer_copyright: "© 2025 Project-0. Барлық құқықтар қорғалған. Қазақстанда жасалған 🇰🇿",
+                modal_title: "Байланыс ақпараты",
+                modal_name: "Қанат Ернұр"
+            },
+            ru: {
+                logo: "Project-0",
+                nav_features: "Фичи",
+                nav_how: "Как работает",
+                nav_team: "Команда",
+                nav_pricing: "Цены",
+                nav_contact: "Контакты",
+                nav_login: "Войти",
+                hero_subtitle: "Build full web apps instantly",
+                hero_description: "Powered by AI. Generate complete MVPs in minutes. Preview. Download. Ship.",
+                hero_ai_badge: "AI Generated",
+                hero_live_badge: "Live",
+                features_title: "Ключевые возможности",
+                features_subtitle: "Все что нужно для создания веб-приложений",
+                feature1_title: "Instant Generation",
+                feature1_desc: "Мгновенная генерация полных веб-приложений с HTML, CSS, JS и бэкендом",
+                feature1_item1: "Полный стек",
+                feature1_item2: "Готовый к деплою",
+                feature1_item3: "Лучшие практики",
+                feature2_title: "Live Preview",
+                feature2_desc: "Встроенный превью с live-режимом для мгновенного тестирования",
+                feature2_item1: "Real-time редактирование",
+                feature2_item2: "Мобильная версия",
+                feature2_item3: "Инспектор кода",
+                feature3_title: "Export ZIP",
+                feature3_desc: "Скачивание проекта в ZIP для локальной разработки",
+                feature3_item1: "Чистый код",
+                feature3_item2: "Документация",
+                feature3_item3: "Git ready",
+                feature4_title: "AI-Powered",
+                feature4_desc: "Продвинутый ИИ на базе Ollama для генерации кода",
+                feature4_item1: "Локальная модель",
+                feature4_item2: "Быстрая обработка",
+                feature4_item3: "Высокое качество",
+                feature5_title: "No Code Required",
+                feature5_desc: "Создавайте приложения без навыков программирования",
+                feature5_item1: "Естественный язык",
+                feature5_item2: "Простые инструкции",
+                feature5_item3: "Интуитивный интерфейс",
+                feature6_title: "Real-time Editing",
+                feature6_desc: "Редактируйте код прямо в браузере",
+                feature6_item1: "Syntax highlight",
+                feature6_item2: "Auto-save",
+                feature6_item3: "Collaboration",
+                how_title: "Как это работает",
+                how_subtitle: "4 простых шага к вашему приложению",
+                how_step1_title: "Опиши идею",
+                how_step1_desc: "Расскажи ИИ что ты хочешь создать простым языком",
+                how_step2_title: "AI генерирует код",
+                how_step2_desc: "Нейросеть создает полный код приложения за секунды",
+                how_step3_title: "Тестируй в превью",
+                how_step3_desc: "Сразу проверь как работает приложение в live-режиме",
+                how_step4_title: "Скачай и используй",
+                how_step4_desc: "Экспортируй проект и начинай использовать его",
+                team_title: "Наша команда",
+                team_subtitle: "Студенты института ИИ Коркыт ата",
+                team_yernur_role: "Разработчик и основатель проекта",
+                team_yernur_desc: "Full-stack разработчик с 2+ годами опыта. Создал инновационную AI-платформу для автоматизации веб-разработки.",
+                team_mukhammad_role: "DevOps проекта",
+                team_mukhammad_desc: "Специалист по инфраструктуре и развертыванию. Обеспечивает стабильную работу платформы и масштабирование.",
+                game_title: "Мини-игра",
+                game_subtitle: "во время генерации",
+                game_desc: "Инновационная фича — играйте пока ИИ создает ваше приложение!",
+                game_score: "Счет:",
+                game_controls: "Нажмите пробел для прыжка",
+                game_note: "Это демонстрация игры. ИИ-персонаж прыгает через ошибки и собирает коды как очки.",
+                game_credit: "Created by Project-0",
+                pricing_title: "Выберите тариф",
+                pricing_subtitle: "2 кредита за каждый запрос",
+                pricing_free_title: "Бесплатно",
+                pricing_free_period: "/навсегда",
+                pricing_free_feature1: "3 запроса при регистрации",
+                pricing_free_feature2: "Базовый функционал",
+                pricing_free_feature3: "Приоритетная поддержка",
+                pricing_starter_title: "Стартовый",
+                pricing_starter_period: "/разово",
+                pricing_starter_feature1: "10 кредитов",
+                pricing_starter_feature2: "Все фичи",
+                pricing_starter_feature3: "Email поддержка",
+                pricing_standard_title: "Стандарт",
+                pricing_standard_period: "/разово",
+                pricing_standard_badge: "Популярный",
+                pricing_standard_feature1: "50 кредитов",
+                pricing_standard_feature2: "Все фичи",
+                pricing_standard_feature3: "Приоритетная поддержка",
+                pricing_pro_title: "Pro",
+                pricing_pro_period: "/разово",
+                pricing_pro_feature1: "100 кредитов",
+                pricing_pro_feature2: "Все фичи",
+                pricing_pro_feature3: "VIP поддержка 24/7",
+                kz_title: "Сделано в Казахстане",
+                kz_desc: "Мы гордимся тем, что создаем инновационные технологии в сердце Центральной Азии. Наша команда разрабатывает передовые AI-решения для всего мира.",
+                kz_year: "Год основания",
+                kz_location_name: "Институт ИИ",
+                kz_location: "Коркыт ата",
+                kz_card_title: "Kazakhstan",
+                kz_card_subtitle: "Innovation Hub",
+                footer_brand: "Project-0",
+                footer_desc: "AI платформа для мгновенной генерации веб-приложений",
+                footer_product_title: "Продукт",
+                footer_product_features: "Фичи",
+                footer_product_pricing: "Цены",
+                footer_company_title: "Компания",
+                footer_company_about: "О нас",
+                footer_contact_title: "Контакты",
+                footer_contact_location: "Институт ИИ Коркыт ата",
+                footer_copyright: "© 2025 Project-0. Все права защищены. Сделано в Казахстане 🇰🇿",
+                modal_title: "Контактная информация",
+                modal_name: "Канат Ернур"
+            },
+            en: {
+                logo: "Project-0",
+                nav_features: "Features",
+                nav_how: "How it works",
+                nav_team: "Team",
+                nav_pricing: "Pricing",
+                nav_contact: "Contact",
+                nav_login: "Login",
+                hero_subtitle: "Build full web apps instantly",
+                hero_description: "Powered by AI. Generate complete MVPs in minutes. Preview. Download. Ship.",
+                hero_ai_badge: "AI Generated",
+                hero_live_badge: "Live",
+                features_title: "Key Features",
+                features_subtitle: "Everything you need to build web apps",
+                feature1_title: "Instant Generation",
+                feature1_desc: "Instant generation of complete web applications with HTML, CSS, JS and backend",
+                feature1_item1: "Full stack",
+                feature1_item2: "Ready to deploy",
+                feature1_item3: "Best practices",
+                feature2_title: "Live Preview",
+                feature2_desc: "Built-in preview with live mode for instant testing",
+                feature2_item1: "Real-time editing",
+                feature2_item2: "Mobile version",
+                feature2_item3: "Code inspector",
+                feature3_title: "Export ZIP",
+                feature3_desc: "Download project in ZIP for local development",
+                feature3_item1: "Clean code",
+                feature3_item2: "Documentation",
+                feature3_item3: "Git ready",
+                feature4_title: "AI-Powered",
+                feature4_desc: "Advanced AI based on Ollama for code generation",
+                feature4_item1: "Local model",
+                feature4_item2: "Fast processing",
+                feature4_item3: "High quality",
+                feature5_title: "No Code Required",
+                feature5_desc: "Create applications without programming skills",
+                feature5_item1: "Natural language",
+                feature5_item2: "Simple instructions",
+                feature5_item3: "Intuitive interface",
+                feature6_title: "Real-time Editing",
+                feature6_desc: "Edit code directly in browser",
+                feature6_item1: "Syntax highlight",
+                feature6_item2: "Auto-save",
+                feature6_item3: "Collaboration",
+                how_title: "How it works",
+                how_subtitle: "4 simple steps to your application",
+                how_step1_title: "Describe idea",
+                how_step1_desc: "Tell AI what you want to create in simple language",
+                how_step2_title: "AI generates code",
+                how_step2_desc: "Neural network creates complete code in seconds",
+                how_step3_title: "Test in preview",
+                how_step3_desc: "Immediately check how the application works in live mode",
+                how_step4_title: "Download and use",
+                how_step4_desc: "Export project and start using it",
+                team_title: "Our Team",
+                team_subtitle: "Students of Korkyt Ata AI Institute",
+                team_yernur_role: "Developer and project founder",
+                team_yernur_desc: "Full-stack developer with 2+ years experience. Created innovative AI platform for web development automation.",
+                team_mukhammad_role: "Project DevOps",
+                team_mukhammad_desc: "Infrastructure and deployment specialist. Ensures stable platform operation and scaling.",
+                game_title: "Mini-game",
+                game_subtitle: "during generation",
+                game_desc: "Innovative feature — play while AI creates your application!",
+                game_score: "Score:",
+                game_controls: "Press space to jump",
+                game_note: "This is a game demonstration. AI character jumps over errors and collects codes as points.",
+                game_credit: "Created by Project-0",
+                pricing_title: "Choose Plan",
+                pricing_subtitle: "2 credits per request",
+                pricing_free_title: "Free",
+                pricing_free_period: "/forever",
+                pricing_free_feature1: "3 requests on registration",
+                pricing_free_feature2: "Basic functionality",
+                pricing_free_feature3: "Priority support",
+                pricing_starter_title: "Starter",
+                pricing_starter_period: "/once",
+                pricing_starter_feature1: "10 credits",
+                pricing_starter_feature2: "All features",
+                pricing_starter_feature3: "Email support",
+                pricing_standard_title: "Standard",
+                pricing_standard_period: "/once",
+                pricing_standard_badge: "Popular",
+                pricing_standard_feature1: "50 credits",
+                pricing_standard_feature2: "All features",
+                pricing_standard_feature3: "Priority support",
+                pricing_pro_title: "Pro",
+                pricing_pro_period: "/once",
+                pricing_pro_feature1: "100 credits",
+                pricing_pro_feature2: "All features",
+                pricing_pro_feature3: "VIP support 24/7",
+                kz_title: "Made in Kazakhstan",
+                kz_desc: "We are proud to create innovative technologies in the heart of Central Asia. Our team develops advanced AI solutions for the whole world.",
+                kz_year: "Founded",
+                kz_location_name: "AI Institute",
+                kz_location: "Korkyt Ata",
+                kz_card_title: "Kazakhstan",
+                kz_card_subtitle: "Innovation Hub",
+                footer_brand: "Project-0",
+                footer_desc: "AI platform for instant web application generation",
+                footer_product_title: "Product",
+                footer_product_features: "Features",
+                footer_product_pricing: "Pricing",
+                footer_company_title: "Company",
+                footer_company_about: "About us",
+                footer_contact_title: "Contact",
+                footer_contact_location: "Korkyt Ata AI Institute",
+                footer_copyright: "© 2025 Project-0. All rights reserved. Made in Kazakhstan 🇰🇿",
+                modal_title: "Contact Information",
+                modal_name: "Kanat Yernur"
+            }
+        };
+
+        let currentLang = 'ru';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            
+            // Update button styles
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('bg-black', 'text-white');
+                } else {
+                    btn.classList.remove('bg-black', 'text-white');
+                }
+            });
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+        }
+
+        // Modal functions
+        function showContactModal() {
+            const modal = document.getElementById('contactModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeContactModal() {
+            const modal = document.getElementById('contactModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('contactModal');
+            if (event.target === modal) {
+                closeContactModal();
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeContactModal();
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-opacity-95');
+            } else {
+                nav.classList.remove('bg-opacity-95');
+            }
+        });
+
+        // Initialize animations on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('slide-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
